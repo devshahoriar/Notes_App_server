@@ -4,6 +4,7 @@ import { validateError } from '../utils'
 import Note from '../model/todo.model'
 import mongoose from 'mongoose'
 import { getAllUsers } from '../utils/socketUserStore'
+import { io } from '..'
 
 const noteSchema = z.object({
   title: z
@@ -62,7 +63,7 @@ export const createNote = async (req: Request, res: Response) => {
       title: data.data.title,
       content: data.data.content,
     }).save()
-
+    io.emit('updateNote')
     res.json({ message: 'Note created', success: true, note: newNote })
   } catch (error: any) {
     res.status(400).json({ message: error.message })
@@ -101,6 +102,7 @@ export const updateNote = async (req: Request, res: Response) => {
       },
       { new: false }
     )
+    io.emit('updateNote')
 
     res.json({ message: 'Note updated', success: true, note })
   } catch (error: any) {
@@ -129,7 +131,7 @@ export const deleteNote = async (req: Request, res: Response) => {
         success: false,
       })
     }
-
+    io.emit('updateNote')
     res.json({ message: 'Note deleted successfully', success: true })
   } catch (error: any) {
     res.status(500).json({ message: error.message, success: false })

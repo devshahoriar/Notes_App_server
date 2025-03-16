@@ -4,7 +4,7 @@ import { Server, Socket } from 'socket.io'
 import app from './app'
 import User from './model/user.model'
 import { validateToken } from './utils/jwtToken'
-import { addUser, removeUser } from './utils/socketUserStore'
+import { addUser, getUserBySocketId, removeUser } from './utils/socketUserStore'
 
 const port = process.env.PORT || 5000
 
@@ -47,17 +47,19 @@ io.on('connection', (socket: AuthenticatedSocket) => {
       }
     })
   }
-  io.emit('userConnect', null)
+  io.emit('updateUser')
   socket.on('startEditNote', (noteId) => {
-    console.log(`start edit = ${noteId} , user = ${socket.userId}`)
+    const user = getUserBySocketId(socket.id)
+    io.emit('noteEdit', { nodeId: noteId, user: user?.name, start: true })
   })
 
   socket.on('endEditNote', (noteId) => {
-    console.log(`end edit = ${noteId} , user = ${socket.userId}`)
+    const user = getUserBySocketId(socket.id)
+    io.emit('noteEdit', { nodeId: noteId, user: user?.name, end: true })
   })
 
   socket.on('disconnect', () => {
-    io.emit('userDisconnect', null)
+    io.emit('updateUser')
     removeUser(socket.id)
   })
 })
@@ -74,3 +76,5 @@ mongoose
     console.error(err)
     process.exit(1)
   })
+
+export { io }
