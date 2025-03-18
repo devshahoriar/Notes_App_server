@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { validateError } from '../utils'
 import Note from '../model/todo.model'
 import mongoose from 'mongoose'
-import { getAllUsers } from '../utils/socketUserStore'
+
 import { io } from '..'
 
 const noteSchema = z.object({
@@ -138,12 +138,3 @@ export const deleteNote = async (req: Request, res: Response) => {
   }
 }
 
-export const getAllUsersR = async (req: Request, res: Response) => {
-  try {
-    const users = getAllUsers()
-    
-    res.json({ success: true, users })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message, success: false })
-  }
-}

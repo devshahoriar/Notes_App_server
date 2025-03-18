@@ -3,7 +3,6 @@ import {
   createNote,
   deleteNote,
   getAllNote,
-  getAllUsersR,
   getNote,
   updateNote,
 } from '../controller/note.controller'
@@ -11,7 +10,6 @@ import authMiddleware from '../middleware/authmiddleware'
 
 const noteRouter = express.Router()
 
-noteRouter.get('/activeUsers', authMiddleware, getAllUsersR)
 
 noteRouter.get('/', authMiddleware, getAllNote)
 noteRouter.get('/:noteId', authMiddleware, getNote)

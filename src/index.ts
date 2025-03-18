@@ -4,7 +4,12 @@ import { Server, Socket } from 'socket.io'
 import app from './app'
 import User from './model/user.model'
 import { validateToken } from './utils/jwtToken'
-import { addUser, getUserBySocketId, removeUser } from './utils/socketUserStore'
+import {
+  addUser,
+  getAllUsers,
+  getUserBySocketId,
+  removeUser,
+} from './utils/socketUserStore'
 
 const port = process.env.PORT || 5000
 
@@ -44,10 +49,11 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     User.findById(socket.userId, 'name email').then((user) => {
       if (user) {
         addUser(socket.id, socket?.userId as string, user.name, user.email)
+        io.emit('updateUser', getAllUsers())
       }
     })
   }
-  io.emit('updateUser')
+  
   socket.on('startEditNote', (noteId) => {
     const user = getUserBySocketId(socket.id)
     io.emit('noteEdit', { nodeId: noteId, user: user?.name, start: true })
@@ -59,8 +65,8 @@ io.on('connection', (socket: AuthenticatedSocket) => {
   })
 
   socket.on('disconnect', () => {
-    io.emit('updateUser')
     removeUser(socket.id)
+    io.emit('updateUser', getAllUsers())
   })
 })
 
@@ -78,3 +84,4 @@ mongoose
   })
 
 export { io }
+
