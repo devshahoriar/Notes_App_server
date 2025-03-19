@@ -99,7 +99,7 @@ export const getRefreshToken = async (req: Request, res: Response) => {
     }
     const data: any = validateToken(refreshToken)
 
-    const accessToken = getTokens({ id: data.id }, '1h')
+    const accessToken = getTokens({ id: data.id }, '10s')
     const NewrefreshToken = getTokens({ id: data.id }, '30d')
 
     const u: any = await User.findOne({

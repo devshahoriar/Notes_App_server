@@ -63,6 +63,7 @@ export const createNote = async (req: Request, res: Response) => {
       title: data.data.title,
       content: data.data.content,
     }).save()
+
     io.emit('updateNote')
     res.json({ message: 'Note created', success: true, note: newNote })
   } catch (error: any) {

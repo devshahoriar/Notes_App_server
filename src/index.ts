@@ -7,8 +7,7 @@ import { validateToken } from './utils/jwtToken'
 import {
   addUser,
   getAllUsers,
-  getUserBySocketId,
-  removeUser,
+  removeUser
 } from './utils/socketUserStore'
 
 const port = process.env.PORT || 5000
@@ -53,15 +52,13 @@ io.on('connection', (socket: AuthenticatedSocket) => {
       }
     })
   }
-  
-  socket.on('startEditNote', (noteId) => {
-    const user = getUserBySocketId(socket.id)
-    io.emit('noteEdit', { nodeId: noteId, user: user?.name, start: true })
+
+  socket.on('startEditNote', (data: any) => {
+    io.emit('noteEdit', { nodeId: data.noteId, user: data?.user, start: true })
   })
 
-  socket.on('endEditNote', (noteId) => {
-    const user = getUserBySocketId(socket.id)
-    io.emit('noteEdit', { nodeId: noteId, user: user?.name, end: true })
+  socket.on('endEditNote', (data: any) => {
+    io.emit('noteEdit', { nodeId: data.noteId, user: data?.user, end: true })
   })
 
   socket.on('disconnect', () => {
